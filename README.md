@@ -51,11 +51,9 @@ Insomnia_killer/
 ## 🛠️ Built With
 
 - **HTML5** — Semantic, accessible markup
-- **Vanilla CSS3** — Custom properties, CSS Grid/Flexbox, glassmorphic UI, keyframe animations
-- **Vanilla JavaScript (ES6+)** — Web Audio API, dynamic timers, and local state management
+- **CSS** — Custom properties, CSS Grid/Flexbox, glassmorphic UI, keyframe animations
+- **JavaScript** — Web Audio API, dynamic timers, and local state management
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License - feel free to use and adapt!

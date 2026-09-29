@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insomnia Killer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="stars-layer" id="stars-layer"></div>
+
+  <div id="midnight-overlay">
+    <div class="midnight-msg">🌙 It's Midnight</div>
+    <div class="midnight-sub">Time to put your screen down and rest...</div>
+  </div>
+
+  <!-- Late Night Wellness Suggestion Panel -->
+  <div id="late-night-panel" class="late-night-panel hidden">
+    <button class="late-night-close" onclick="closeLateNightPanel()">✕</button>
+    <div class="late-night-title">🌙 Late Night Activity Detected</div>
+    <div class="late-night-sub">Your eyes and mind deserve care right now. Choose a wellness activity:</div>
+    <div class="late-night-options">
+      <button class="wellness-btn" onclick="startEyeExercise(); closeLateNightPanel();">👁️ Eye Relaxation</button>
+      <button class="wellness-btn" onclick="showMeditation(); closeLateNightPanel();">🧘 Guided Meditation</button>
+      <button class="wellness-btn" onclick="showMusic(); closeLateNightPanel();">🎵 Relaxing Music</button>
+    </div>
+  </div>
+
+  <!-- Eye Exercise Modal -->
+  <div id="eye-exercise-modal" class="eye-modal hidden">
+    <div class="eye-modal-inner">
+      <button class="eye-modal-close" onclick="closeEyeExercise()">✕</button>
+      <h2 class="eye-modal-title">👁️ Eye Relaxation Exercise</h2>
+      <p class="eye-modal-sub">Follow the dot with your eyes. Breathe slowly and blink naturally.</p>
+      <div class="eye-exercise-stage" id="eye-stage">
+        <div class="eye-dot" id="eye-dot"></div>
+        <div class="eye-instruction" id="eye-instruction">Press Begin to start</div>
+      </div>
+      <div class="eye-steps">
+        <div class="eye-step" id="step-0"><span class="step-icon">👁️</span><span>Follow Dot</span></div>
+        <div class="eye-step" id="step-1"><span class="step-icon">🔄</span><span>Eye Rolls</span></div>
+        <div class="eye-step" id="step-2"><span class="step-icon">😌</span><span>Blink Rest</span></div>
+        <div class="eye-step" id="step-3"><span class="step-icon">🌿</span><span>Palm & Rest</span></div>
+      </div>
+      <div class="eye-timer-display" id="eye-timer-display">00:30</div>
+      <button class="eye-start-btn" id="eye-start-btn" onclick="beginEyeExercise()">▶ Begin Exercise</button>
+    </div>
+  </div>
+
+  <!-- Meditation Modal -->
+  <div id="meditation-modal" class="meditation-modal hidden">
+    <div class="meditation-inner">
+      <button class="med-close" onclick="closeMeditation()">✕</button>
+      <h2 class="med-title">🧘 Guided Meditation</h2>
+      <p class="med-sub">A gentle breathing session to calm your mind before sleep.</p>
+      <div class="breath-circle-wrap">
+        <div class="breath-circle" id="breath-circle">
+          <span id="breath-label">Ready</span>
+        </div>
+      </div>
+      <div class="med-instruction" id="med-instruction">Press Start to begin your 2-minute session</div>
+      <button class="med-start-btn" id="med-start-btn" onclick="startMeditation()">▶ Start Session</button>
+    </div>
+  </div>
+
+  <!-- Music Modal -->
+  <div id="music-modal" class="music-modal hidden">
+    <div class="music-inner">
+      <button class="music-close" onclick="closeMusic()">✕</button>
+      <h2 class="music-title">🎵 Relaxing Music</h2>
+      <p class="music-sub">Gentle tones to ease your mind and prepare for sleep.</p>
+      <div class="music-visualizer" id="music-viz">
+        <div class="music-bar"></div><div class="music-bar"></div><div class="music-bar"></div>
+        <div class="music-bar"></div><div class="music-bar"></div><div class="music-bar"></div>
+        <div class="music-bar"></div><div class="music-bar"></div>
+      </div>
+      <div class="music-tracks">
+        <button class="track-btn active" onclick="selectTrack(0, this)">🌊 Ocean Waves</button>
+        <button class="track-btn" onclick="selectTrack(1, this)">🌧️ Rainfall</button>
+        <button class="track-btn" onclick="selectTrack(2, this)">🌿 Forest Breeze</button>
+        <button class="track-btn" onclick="selectTrack(3, this)">✨ Cosmic Drift</button>
+      </div>
+      <button class="music-play-btn" id="music-play-btn" onclick="toggleMusic()">▶ Play</button>
+    </div>
+  </div>
+
+  <div class="clock-strip">
+    🕐 <span id="live-clock">--:--:--</span>
+    &nbsp;|&nbsp;
+    <span id="sleep-tip">Sweet dreams await you.</span>
+    &nbsp;|&nbsp;
+    🖥️ Screen time: <span id="screen-time-strip">00:00:00</span>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo"><span class="logo-moon">🌙</span> Insomnia Killer</a>
+      <div class="nav-links">
+        <button class="nav-btn active" onclick="showPage('home', this)">Home</button>
+        <button class="nav-btn" onclick="showPage('dashboard', this)">Dashboard</button>
+        <button class="nav-btn" onclick="showPage('report', this)">Report</button>
+        <button class="nav-btn" onclick="showPage('awareness', this)">Awareness</button>
+        <button class="nav-btn nav-icon-btn" onclick="showMeditation()" title="Meditation">🧘</button>
+        <button class="nav-btn nav-icon-btn" onclick="showMusic()" title="Relaxing Music">🎵</button>
+        <div class="nav-report-pill" id="nav-report-pill"
+             onclick="showPage('report', document.querySelectorAll('.nav-btn')[2])"
+             title="View your weekly report">
+          <div class="banner-dot"></div>
+          <span id="nav-report-label">Avg 4.0h · View Report</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== HOME ===================== -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-text">
+        <h1>Your nights deserve <em>real rest</em></h1>
+        <p>Insomnia Killer tracks your screen time, visualises your weekly habits day by day, and generates a personalised sleep health report — so you can finally understand and fix your sleep.</p>
+        <div class="hero-btns">
+          <button class="hero-cta" onclick="showPage('dashboard', document.querySelectorAll('.nav-btn')[1])">Open Dashboard →</button>
+          <button class="hero-cta eye-cta" onclick="startEyeExercise()">👁️ Eye Exercise</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg class="sleep-illustration" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="170" cy="130" r="88" fill="url(#moonGrad)" opacity="0.9"/>
+          <circle cx="210" cy="100" r="65" fill="url(#bgGrad)" opacity="0.92"/>
+          <circle cx="60"  cy="60"  r="5"   fill="#fff" opacity="0.8"/>
+          <circle cx="290" cy="50"  r="3.5" fill="#fff" opacity="0.6"/>
+          <circle cx="310" cy="180" r="4"   fill="#fff" opacity="0.7"/>
+          <circle cx="30"  cy="200" r="3"   fill="#fff" opacity="0.5"/>
+          <circle cx="80"  cy="270" r="4.5" fill="#fff" opacity="0.6"/>
+          <circle cx="265" cy="270" r="3"   fill="#fff" opacity="0.5"/>
+          <text x="235" y="88"  font-family="Georgia,serif" font-size="22" fill="white" opacity="0.9"  font-weight="bold">z</text>
+          <text x="256" y="68"  font-family="Georgia,serif" font-size="28" fill="white" opacity="0.75" font-weight="bold">z</text>
+          <text x="280" y="44"  font-family="Georgia,serif" font-size="34" fill="white" opacity="0.55" font-weight="bold">z</text>
+          <circle cx="148" cy="118" r="12" fill="white" opacity="0.12"/>
+          <circle cx="165" cy="148" r="8"  fill="white" opacity="0.08"/>
+          <circle cx="140" cy="150" r="5"  fill="white" opacity="0.1"/>
+          <rect x="60" y="240" width="220" height="70" rx="35" fill="url(#pillowGrad)" opacity="0.9"/>
+          <ellipse cx="130" cy="242" rx="50" ry="12" fill="white" opacity="0.15"/>
+          <circle cx="170" cy="232" r="38" fill="url(#faceGrad)"/>
+          <path d="M154 228 Q158 224 162 228" stroke="#a0103a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M178 228 Q182 224 186 228" stroke="#a0103a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M162 238 Q170 244 178 238" stroke="#a0103a" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M44 130 L48 120 L52 130 L48 140Z" fill="#ffaacc" opacity="0.7"/>
+          <path d="M280 130 L284 120 L288 130 L284 140Z" fill="#ffaacc" opacity="0.6"/>
+          <defs>
+            <radialGradient id="moonGrad" cx="40%" cy="40%"><stop offset="0%" stop-color="#ffcce8"/><stop offset="100%" stop-color="#e0448a"/></radialGradient>
+            <radialGradient id="bgGrad" cx="40%" cy="40%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="100%" stop-color="#f7a8d0"/></radialGradient>
+            <linearGradient id="pillowGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffb3d1"/><stop offset="100%" stop-color="#e0448a" stop-opacity="0.7"/></linearGradient>
+            <radialGradient id="faceGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#ffe0f0"/><stop offset="100%" stop-color="#ffb3d1"/></radialGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="guidelines">
+      <h2 class="section-title">How to use <span>Insomnia Killer</span></h2>
+      <div class="cards-grid">
+        <div class="card"><span class="card-icon">🎨</span><h3>Watch the Color</h3><p>The page starts pink. As midnight approaches it shifts to deep blue — a visual cue your body understands.</p></div>
+        <div class="card"><span class="card-icon">📊</span><h3>Check the Dashboard</h3><p>Live clock, midnight shift meter, and your real-time screen time counter — all in one place.</p></div>
+        <div class="card"><span class="card-icon">📈</span><h3>Weekly Charts</h3><p>The Report page shows a bar chart and line graph of your screen time — Monday through Sunday.</p></div>
+        <div class="card"><span class="card-icon">🏅</span><h3>Earn a Badge</h3><p>Week 1 good sleep earns a Silver Badge. Keep it up week 2 for the Golden Badge!</p></div>
+        <div class="card"><span class="card-icon">⏰</span><h3>Midnight Alarm</h3><p>At exactly 12:00 AM a full-screen animation reminds you: screens off, sleep now.</p></div>
+        <div class="card"><span class="card-icon">💤</span><h3>Sleep Better</h3><p>Consistent use builds self-awareness. Visual cues train your brain to wind down each night.</p></div>
+      </div>
+    </div>
+    <footer>© 2025 Insomnia Killer · Crafted with care for better sleep 🌙</footer>
+  </div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <div class="page" id="page-dashboard">
+    <div class="dashboard">
+      <h2 class="section-title">Sleep <span>Dashboard</span></h2>
+      <p class="dash-subtitle">Live monitoring — your screen shifts tone as the night deepens.</p>
+
+      <div class="dash-report-link" onclick="showPage('report', document.querySelectorAll('.nav-btn')[2])">
+        <div class="dash-report-left">
+          <div class="banner-dot" id="dash-banner-dot"></div>
+          <div><strong id="dash-banner-title">Weekly Sleep Report</strong><p id="dash-banner-desc">Tap to view your charts &amp; sleep verdict.</p></div>
+        </div>
+        <span class="banner-arrow">→</span>
+      </div>
+
+      <div class="screen-time-card">
+        <div class="st-icon">🖥️</div>
+        <div class="st-info">
+          <p class="st-label">Screen Time This Session</p>
+          <p class="st-value" id="screen-time-big">00:00:00</p>
+          <p class="st-sub" id="screen-time-warning">Keep it under 2 hours for healthy sleep.</p>
+        </div>
+        <div class="st-ring-wrap">
+          <svg viewBox="0 0 80 80" class="st-ring">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8"/>
+            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--accent)" stroke-width="8"
+              stroke-dasharray="213.6" stroke-dashoffset="213.6"
+              stroke-linecap="round" transform="rotate(-90 40 40)"
+              id="st-ring-fill" style="transition:stroke-dashoffset 1s ease"/>
+          </svg>
+          <span class="st-ring-pct" id="st-ring-pct">0%</span>
+        </div>
+      </div>
+
+      <div class="dash-clock-wrap">
+        <div class="clock-glow"></div>
+        <div class="big-clock" id="big-clock">00:00:00</div>
+        <div class="dash-date" id="dash-date">—</div>
+      </div>
+
+      <div class="status-badge" id="status-badge">🌸 Day Mode — You're fine to be online</div>
+
+      <div class="color-meter">
+        <h3>🌗 Midnight Shift Meter</h3>
+        <div class="meter-bar-wrap"><div id="meter-fill" style="width:0%"></div></div>
+        <div class="meter-labels"><span>🌸 Pink (Daytime)</span><span>🌙 Midnight Blue</span></div>
+        <p style="font-size:0.82rem;opacity:0.65;margin-top:0.8rem;display:block;text-align:center;" id="meter-label">Meter fills from 10 PM → 12 AM</p>
+      </div>
+
+      <div class="swatch-row">
+        <div class="swatch-item"><div class="swatch-circle pink"></div><p class="swatch-label">Day Pink</p></div>
+        <div class="swatch-item"><div class="swatch-circle yellow"></div><p class="swatch-label">10PM Yellow</p></div>
+        <div class="swatch-item"><div class="swatch-circle blue"></div><p class="swatch-label">Midnight Blue</p></div>
+      </div>
+    </div>
+    <footer>© 2025 Insomnia Killer · Crafted with care for better sleep 🌙</footer>
+  </div>
+
+  <!-- ===================== REPORT ===================== -->
+  <div class="page" id="page-report">
+    <div class="report-page">
+      <h2 class="section-title">Weekly <span>Sleep Report</span></h2>
+      <p class="dash-subtitle">Screen time per day — bar chart &amp; trend line — plus your full sleep health verdict.</p>
+
+      <div class="chart-toggle">
+        <button class="toggle-btn active" id="btn-bar"  onclick="switchChart('bar')">📊 Bar Chart</button>
+        <button class="toggle-btn"        id="btn-line" onclick="switchChart('line')">📈 Line Graph</button>
+      </div>
+
+      <div class="chart-container" id="chart-bar">
+        <div class="chart-title">Screen Time by Day (hours)</div>
+        <div class="bar-chart-wrap">
+          <div class="bar-y-axis" id="bar-y-axis"></div>
+          <div class="bar-chart"  id="bar-chart-render"></div>
+        </div>
+        <div class="chart-x-labels" id="bar-x-labels"></div>
+      </div>
+
+      <div class="chart-container hidden" id="chart-line">
+        <div class="chart-title">Screen Time Trend (hours)</div>
+        <svg class="line-chart-svg" id="line-chart-svg" viewBox="0 0 700 260" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <div class="stats-row" id="stats-row"></div>
+
+      <div style="text-align:center; margin:2.5rem 0 1rem;">
+        <button class="generate-btn" onclick="generateReport()">📋 Generate Sleep Report</button>
+      </div>
+
+      <div class="report-result hidden" id="report-result"></div>
+
+      <!-- Badge + Download -->
+      <div class="badge-download-wrap hidden" id="badge-download-wrap">
+
+        <!-- SILVER BADGE (week 1 good sleep) -->
+        <div class="medal-wrap hidden" id="silver-badge">
+          <div class="medal-rays silver-rays"></div>
+          <svg class="medal-svg silver-medal-svg" viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sRibbonL" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7ab3d4"/>
+                <stop offset="100%" stop-color="#4a8ab0"/>
+              </linearGradient>
+              <linearGradient id="sRibbonR" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a8d4f0"/>
+                <stop offset="100%" stop-color="#7ab3d4"/>
+              </linearGradient>
+              <radialGradient id="sMedalOuter" cx="50%" cy="40%">
+                <stop offset="0%"   stop-color="#e8e8f0"/>
+                <stop offset="40%"  stop-color="#c0c0d0"/>
+                <stop offset="100%" stop-color="#8080a0"/>
+              </radialGradient>
+              <radialGradient id="sMedalInner" cx="40%" cy="35%">
+                <stop offset="0%"   stop-color="#f5f5ff"/>
+                <stop offset="50%"  stop-color="#c0c0d8"/>
+                <stop offset="100%" stop-color="#9090b0"/>
+              </radialGradient>
+              <radialGradient id="sMedalShine" cx="35%" cy="30%">
+                <stop offset="0%"   stop-color="rgba(255,255,255,0.75)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <filter id="sMedalShadow">
+                <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="rgba(80,80,120,0.55)"/>
+              </filter>
+            </defs>
+            <polygon points="100,80 120,80 110,180 80,180" fill="url(#sRibbonL)" opacity="0.95"/>
+            <polygon points="140,80 160,80 180,180 150,180" fill="url(#sRibbonR)" opacity="0.95"/>
+            <polygon points="80,180 110,180 95,210" fill="#4a8ab0"/>
+            <polygon points="150,180 180,180 165,210" fill="#7ab3d4"/>
+            <rect x="120" y="80" width="20" height="100" fill="#9ac8e8" opacity="0.6"/>
+            <circle cx="130" cy="185" r="78" fill="url(#sMedalOuter)" filter="url(#sMedalShadow)"/>
+            <circle cx="130" cy="185" r="72" fill="none" stroke="#a0a0c0" stroke-width="2.5" stroke-dasharray="6 3"/>
+            <circle cx="130" cy="185" r="60" fill="url(#sMedalInner)"/>
+            <circle cx="130" cy="185" r="54" fill="none" stroke="rgba(200,200,220,0.5)" stroke-width="1.5"/>
+            <circle cx="130" cy="185" r="60" fill="url(#sMedalShine)"/>
+            <path d="M118 168 Q130 155 145 168 Q152 180 145 195 Q130 207 115 195 Q108 182 118 168Z" fill="#f0f0ff" opacity="0.9"/>
+            <circle cx="142" cy="172" r="14" fill="url(#sMedalInner)"/>
+            <text x="112" y="183" font-family="Georgia,serif" font-size="11" fill="#4a4a70" font-weight="bold" opacity="0.9">z</text>
+            <text x="122" y="175" font-family="Georgia,serif" font-size="13" fill="#4a4a70" font-weight="bold" opacity="0.85">z</text>
+            <text x="134" y="168" font-family="Georgia,serif" font-size="15" fill="#4a4a70" font-weight="bold" opacity="0.8">z</text>
+            <text x="98"  y="167" font-size="12" fill="#a0a0c0" opacity="0.9">★</text>
+            <text x="148" y="167" font-size="12" fill="#a0a0c0" opacity="0.9">★</text>
+            <text x="123" y="215" font-size="10" fill="#a0a0c0" opacity="0.7">★</text>
+            <path id="sTextArc" d="M 65,185 A 65,65 0 0,1 195,185" fill="none"/>
+            <text font-family="Georgia,serif" font-size="9" fill="#4a4a70" font-weight="bold" letter-spacing="1.2">
+              <textPath href="#sTextArc" startOffset="6%">WEEK 1 · SILVER</textPath>
+            </text>
+            <text x="130" y="230" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="#707090" letter-spacing="0.5" id="silver-week-text">WEEK OF MAR 10</text>
+            <ellipse cx="130" cy="108" rx="12" ry="8" fill="#a0a0c0"/>
+            <ellipse cx="130" cy="108" rx="9"  ry="5" fill="#e0e0f0"/>
+          </svg>
+          <p class="medal-caption">🥈 Excellent! Week 1 Silver Badge Earned!</p>
+        </div>
+
+        <!-- GOLD BADGE (week 2 good sleep) -->
+        <div class="medal-wrap hidden" id="sleep-badge">
+          <div class="medal-rays" id="medal-rays"></div>
+          <svg class="medal-svg" viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="ribbonL" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e0448a"/>
+                <stop offset="100%" stop-color="#b02060"/>
+              </linearGradient>
+              <linearGradient id="ribbonR" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff85c2"/>
+                <stop offset="100%" stop-color="#e0448a"/>
+              </linearGradient>
+              <radialGradient id="medalOuter" cx="50%" cy="40%">
+                <stop offset="0%"   stop-color="#ffe066"/>
+                <stop offset="40%"  stop-color="#f0a500"/>
+                <stop offset="100%" stop-color="#b87000"/>
+              </radialGradient>
+              <radialGradient id="medalInner" cx="40%" cy="35%">
+                <stop offset="0%"   stop-color="#fff8dc"/>
+                <stop offset="50%"  stop-color="#ffd700"/>
+                <stop offset="100%" stop-color="#c8860a"/>
+              </radialGradient>
+              <radialGradient id="medalShine" cx="35%" cy="30%">
+                <stop offset="0%"   stop-color="rgba(255,255,255,0.6)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <filter id="medalShadow">
+                <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="rgba(180,100,0,0.5)"/>
+              </filter>
+              <filter id="glowFilter">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+            <polygon points="100,80 120,80 110,180 80,180" fill="url(#ribbonL)" opacity="0.95"/>
+            <polygon points="140,80 160,80 180,180 150,180" fill="url(#ribbonR)" opacity="0.95"/>
+            <polygon points="80,180 110,180 95,210" fill="#c03070"/>
+            <polygon points="150,180 180,180 165,210" fill="#d05090"/>
+            <rect x="120" y="80" width="20" height="100" fill="#e05898" opacity="0.6"/>
+            <circle cx="130" cy="185" r="78" fill="url(#medalOuter)" filter="url(#medalShadow)"/>
+            <circle cx="130" cy="185" r="72" fill="none" stroke="#c8860a" stroke-width="2.5" stroke-dasharray="6 3"/>
+            <circle cx="130" cy="185" r="60" fill="url(#medalInner)"/>
+            <circle cx="130" cy="185" r="54" fill="none" stroke="rgba(255,200,0,0.5)" stroke-width="1.5"/>
+            <circle cx="130" cy="185" r="60" fill="url(#medalShine)"/>
+            <path d="M118 168 Q130 155 145 168 Q152 180 145 195 Q130 207 115 195 Q108 182 118 168Z" fill="#fff8dc" opacity="0.9"/>
+            <circle cx="142" cy="172" r="14" fill="url(#medalInner)"/>
+            <text x="112" y="183" font-family="Georgia,serif" font-size="11" fill="#7a4f00" font-weight="bold" opacity="0.9">z</text>
+            <text x="122" y="175" font-family="Georgia,serif" font-size="13" fill="#7a4f00" font-weight="bold" opacity="0.85">z</text>
+            <text x="134" y="168" font-family="Georgia,serif" font-size="15" fill="#7a4f00" font-weight="bold" opacity="0.8">z</text>
+            <text x="98"  y="167" font-size="12" fill="#f0a500" opacity="0.9">★</text>
+            <text x="148" y="167" font-size="12" fill="#f0a500" opacity="0.9">★</text>
+            <text x="123" y="215" font-size="10" fill="#f0a500" opacity="0.7">★</text>
+            <path id="textArc" d="M 65,185 A 65,65 0 0,1 195,185" fill="none"/>
+            <text font-family="Georgia,serif" font-size="9.5" fill="#7a4f00" font-weight="bold" letter-spacing="1.5">
+              <textPath href="#textArc" startOffset="8%">SLEEP  CHAMPION</textPath>
+            </text>
+            <text x="130" y="230" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="#a06000" letter-spacing="0.5" id="medal-week-text">WEEK OF MAR 10</text>
+            <ellipse cx="130" cy="108" rx="12" ry="8" fill="#c8860a"/>
+            <ellipse cx="130" cy="108" rx="9"  ry="5" fill="#ffe066"/>
+          </svg>
+          <p class="medal-caption">🥇 Outstanding! Week 2 Golden Badge Earned!</p>
+        </div>
+
+        <!-- No Badge Card -->
+        <div class="no-badge hidden" id="no-badge">
+          <div class="no-badge-inner">
+            <span class="no-badge-icon">🎯</span>
+            <p class="no-badge-title">No Badge This Week</p>
+            <p class="no-badge-desc">Earn your <strong>Silver Badge</strong> by keeping daily screen time under 3 hours this week. Repeat next week for the <strong>Golden Badge</strong>. You've got this!</p>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <button class="download-report-btn" onclick="downloadReport()">⬇️ Download Report</button>
+
+      </div>
+    </div>
+    <footer>© 2025 Insomnia Killer · Crafted with care for better sleep 🌙</footer>
+  </div>
+
+  <!-- ===================== AWARENESS ===================== -->
+  <div class="page" id="page-awareness">
+    <div class="awareness">
+      <div class="awareness-hero">
+        <h2 class="section-title">Why Late Nights <span>Hurt You</span></h2>
+        <p>Understanding the science behind sleep deprivation and screen time is the first step toward lasting change.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-block">
+          <h3>😴 Causes of Sleeping Late</h3>
+          <ul>
+            <li>Scrolling social media creates a dopamine loop that suppresses your brain's natural tiredness signals.</li>
+            <li>Blue light from screens suppresses melatonin production by up to 50%, delaying sleep onset significantly.</li>
+            <li>Fear of missing out (FOMO) keeps you refreshing feeds even when your body is exhausted.</li>
+            <li>Binge-watching auto-plays the next episode before your conscious mind can decide to stop.</li>
+            <li>Irregular schedules throw off your circadian rhythm, making early sleep feel unnatural.</li>
+            <li>Stress and anxiety cause mental hyperactivity — screens become an escape that prolongs wakefulness.</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>📱 Effects of Over Screen Time</h3>
+          <ul>
+            <li>Chronic exposure disrupts REM sleep, reducing memory consolidation and cognitive function.</li>
+            <li>Eye strain and headaches make it harder to physically relax at night.</li>
+            <li>Elevated cortisol from late-night stimulation raises blood pressure and anxiety levels.</li>
+            <li>Impaired immune function — sleep below 7 hours triples risk of common infections.</li>
+            <li>Emotional dysregulation increases; irritability and mood swings become the new normal.</li>
+            <li>Long-term screen addiction rewires reward circuits, making real-world enjoyment less satisfying.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:2rem;">
+        <div class="info-block">
+          <h3>🧠 Mental Health Impact</h3>
+          <ul>
+            <li>Sleep deprivation is strongly linked to heightened rates of depression and anxiety disorders.</li>
+            <li>Reduced slow-wave sleep impairs emotional memory processing, increasing trauma sensitivity.</li>
+            <li>Social comparison on late-night scrolling correlates with lowered self-esteem.</li>
+            <li>Decision-making and impulse control worsen with fewer than 6 hours of sleep.</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>💊 Physical Health Consequences</h3>
+          <ul>
+            <li>Chronic sleep loss is associated with increased risk of type 2 diabetes and obesity.</li>
+            <li>Cardiovascular risk rises sharply — irregular sleep patterns strain heart rhythm.</li>
+            <li>Growth hormone secretion peaks during deep sleep; late nights suppress it.</li>
+            <li>Skin regeneration slows, aging appears accelerated with consistent late nights.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tip-box">
+        <h3>✨ Your 3-Step Sleep Reset</h3>
+        <p>Stop screens 45 minutes before bedtime · Keep your phone across the room · Set a consistent alarm — even on weekends.</p>
+      </div>
+    </div>
+    <footer>© 2025 Insomnia Killer · Crafted with care for better sleep 🌙</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
